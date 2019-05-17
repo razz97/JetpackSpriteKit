@@ -39,23 +39,26 @@ class MenuScene: SKScene {
     }
     
     func setBackground() {
-        let fondo = SKSpriteNode(imageNamed: "background.png")
-        fondo.position = CGPoint(x: frame.size.width / 2, y: frame.size.height / 2)
-        fondo.size = frame.size
-        fondo.zPosition = -1
-        self.addChild(fondo)
-//        let texturaFondo = SKTexture(imageNamed: "background.png")
-//        let movimientoFondo = SKAction.move(by: CGVector(dx: -texturaFondo.size().width, dy: 0), duration: 4)
-//        let movimientoFondoOrigen = SKAction.move(by: CGVector(dx: texturaFondo.size().width, dy: 0), duration: 0)
-//        let movimientoInfinitoFondo = SKAction.repeatForever(SKAction.sequence([movimientoFondo, movimientoFondoOrigen]))
-//        for i in 0...2 {
-//            fondo = SKSpriteNode(texture: texturaFondo)
-//            fondo.position = CGPoint(x: texturaFondo.size().width * CGFloat(i), y: self.frame.midY)
-//            fondo.size.height = self.frame.height
-//            fondo.zPosition = -1
-//            fondo.run(movimientoInfinitoFondo)
-//            self.addChild(fondo)
-//        }
+//        var fondo2 = SKSpriteNode(imageNamed: "background.png")
+//        fondo2.position = CGPoint(x: frame.size.width / 2, y: frame.size.height / 2)
+//        fondo2.size = frame.size
+//        fondo2.zPosition = -1
+//        self.addChild(fondo2)
+        
+        var fondo: SKSpriteNode
+        let texturaFondo = SKTexture(imageNamed: "background.png")
+        let movimientoFondo = SKAction.move(by: CGVector(dx: -frame.size.width, dy: 0), duration: 4)
+        let movimientoFondoOrigen = SKAction.move(by: CGVector(dx: frame.size.width, dy: 0), duration: 0)
+        let movimientoInfinitoFondo = SKAction.repeatForever(SKAction.sequence([movimientoFondo, movimientoFondoOrigen]))
+        for i in 0...2 {
+            fondo = SKSpriteNode(texture: texturaFondo)
+            fondo.size = frame.size
+            fondo.position = CGPoint(x: frame.size.width * CGFloat(i), y: self.frame.midY)
+            fondo.size.height = self.frame.height
+            fondo.zPosition = -1
+            fondo.run(movimientoInfinitoFondo)
+            self.addChild(fondo)
+        }
         
     }
     
@@ -67,9 +70,6 @@ class MenuScene: SKScene {
         let loop = SKAction.repeatForever(SKAction.sequence([horizontalMovement, backToStart]))
         dog.run(loop)
         addChild(dog)
-
-        //let movimientoFondoOrigen = SKAction.move(by: CGVector(dx: dog.size.width, dy: 0), duration: 0)
-        //let movimientoInfinitoFondo = SKAction.repeatForever(SKAction.sequence([movimientoFondo, movimientoFondoOrigen]))
     }
     
     func touchDown(atPoint pos : CGPoint) {
