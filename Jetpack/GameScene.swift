@@ -9,33 +9,38 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     // Función equivalente a viewDidLoad
     override func didMove(to view: SKView) {
-        // Nos encargamos de las colisiones de nuestros nodos
-        //self.physicsWorld.contactDelegate = self
-        initialize()
-        
-        
+        self.physicsWorld.contactDelegate = self
+        setBackground()
+        setDog()
     }
     
-    func initialize() {
-        setTitle()
+    func setBackground() {
+        var background: SKSpriteNode
+        let backTexture = SKTexture(imageNamed: "background.png")
+        let horizontalMovement = SKAction.move(by: CGVector(dx: -frame.size.width, dy: 0), duration: 4)
+        let backToStart = SKAction.move(by: CGVector(dx: frame.size.width, dy: 0), duration: 0)
+        let loop = SKAction.repeatForever(SKAction.sequence([horizontalMovement, backToStart]))
+        for i in 0...2 {
+            background = SKSpriteNode(texture: backTexture)
+            background.size = frame.size
+            background.position = CGPoint(x: frame.size.width * CGFloat(i), y: self.frame.midY)
+            background.size.height = self.frame.height
+            background.zPosition = -1
+            background.run(loop)
+            self.addChild(background)
+        }
     }
     
-    func setTitle() {
-        let title: SKLabelNode = SKLabelNode()
-        title.fontName = "Arial"
-        title.fontSize = 80
-        title.text = "DOGPACK RIDE"
-        title.position = CGPoint(x: self.frame.midX, y: self.frame.midY + 500)
-        title.zPosition = 2
-        self.addChild(title)
+    func setDog() {
+        let dog = SKSpriteNode(imageNamed: "fly1.png")
+        dog.position = CGPoint(x: frame.minX, y: frame.midY)
+        addChild(dog)
     }
-    
-    
     
     func touchDown(atPoint pos : CGPoint) {
         

@@ -12,6 +12,8 @@ import GameplayKit
 class MenuScene: SKScene {
     
     var isButtonHolding: Bool = false
+    let textuteButton = SKTexture(imageNamed: "start.png")
+    let textureButtonHold = SKTexture(imageNamed: "start_hold.png")
     let playButton = SKSpriteNode(imageNamed: "start.png")
     
     override func didMove(to view: SKView) {
@@ -22,7 +24,6 @@ class MenuScene: SKScene {
     }
     
     func setTitle() {
-        print("hello")
         let title: SKLabelNode = SKLabelNode()
         title.fontName = "Arial"
         title.fontSize = 65
@@ -34,33 +35,27 @@ class MenuScene: SKScene {
         self.addChild(title)
     }
     
-    func setPlayButton() {        playButton.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+    func setPlayButton() {
+        playButton.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         playButton.name = "playButton"
         self.addChild(playButton)
     }
     
     func setBackground() {
-//        var fondo2 = SKSpriteNode(imageNamed: "background.png")
-//        fondo2.position = CGPoint(x: frame.size.width / 2, y: frame.size.height / 2)
-//        fondo2.size = frame.size
-//        fondo2.zPosition = -1
-//        self.addChild(fondo2)
-        
-        var fondo: SKSpriteNode
-        let texturaFondo = SKTexture(imageNamed: "background.png")
-        let movimientoFondo = SKAction.move(by: CGVector(dx: -frame.size.width, dy: 0), duration: 4)
-        let movimientoFondoOrigen = SKAction.move(by: CGVector(dx: frame.size.width, dy: 0), duration: 0)
-        let movimientoInfinitoFondo = SKAction.repeatForever(SKAction.sequence([movimientoFondo, movimientoFondoOrigen]))
+        var background: SKSpriteNode
+        let backTexture = SKTexture(imageNamed: "background.png")
+        let horizontalMovement = SKAction.move(by: CGVector(dx: -frame.size.width, dy: 0), duration: 4)
+        let backToStart = SKAction.move(by: CGVector(dx: frame.size.width, dy: 0), duration: 0)
+        let loop = SKAction.repeatForever(SKAction.sequence([horizontalMovement, backToStart]))
         for i in 0...2 {
-            fondo = SKSpriteNode(texture: texturaFondo)
-            fondo.size = frame.size
-            fondo.position = CGPoint(x: frame.size.width * CGFloat(i), y: self.frame.midY)
-            fondo.size.height = self.frame.height
-            fondo.zPosition = -1
-            fondo.run(movimientoInfinitoFondo)
-            self.addChild(fondo)
+            background = SKSpriteNode(texture: backTexture)
+            background.size = frame.size
+            background.position = CGPoint(x: frame.size.width * CGFloat(i), y: self.frame.midY)
+            background.size.height = self.frame.height
+            background.zPosition = -1
+            background.run(loop)
+            self.addChild(background)
         }
-        
     }
     
     func setDog() {
@@ -103,14 +98,15 @@ class MenuScene: SKScene {
             let nodesArray = self.nodes(at: location)
             let nodeName = nodesArray.first?.name
             if nodeName == "playButton" {
-                // CHANGE SCENE
-                print("CHANGE SCENE")
+                let scene = GameScene(size: CGSize(width: 800, height: 800))
+                scene.scaleMode = .resizeFill
+                self.view?.presentScene(scene)
             }
         }
     }
     
     func changeButtonTexture(_ hold: Bool) {
-        playButton.texture = SKTexture(imageNamed: "start\(hold ? "_hold" : "")")
+        playButton.texture = hold ? self.textureButtonHold : self.textuteButton
     }
     
     override func update(_ currentTime: TimeInterval) {
