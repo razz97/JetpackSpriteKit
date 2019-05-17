@@ -11,15 +11,17 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    let dog = SKSpriteNode(imageNamed: "fly1.png")
+    var dog: Dog?
     var timer: Timer = Timer()
     
     override func didMove(to view: SKView) {
-        self.physicsWorld.contactDelegate = self
-        self.physicsWorld.gravity = CGVector(dx: 0, dy: -7)
+        physicsWorld.contactDelegate = self
+        physicsWorld.gravity = CGVector(dx: 0, dy: -7)
+        dog = Dog(gameWithFrame: frame)
+        addChild(dog!)
         setBackground()
-        setDog()
         setBounds()
+        startLaserTimer()
     }
     
     func setBackground() {
@@ -40,25 +42,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func setDog() {
-        dog.physicsBody = SKPhysicsBody(rectangleOf: (dog.texture?.size())!)
-        dog.position = CGPoint(x: frame.minX + 50, y: frame.midY)
-        addChild(dog)
-    }
-    
     func setBounds() {
-        let bottom = SKNode()
+        let boundSize = CGSize(width: frame.maxX, height: 10)
+        let bottom = SKSpriteNode(color: .red, size: boundSize)
         bottom.position = CGPoint(x: frame.midX, y: frame.minY)
-        bottom.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: frame.maxX, height: 10))
+        bottom.physicsBody = SKPhysicsBody(rectangleOf: boundSize)
         bottom.physicsBody!.affectedByGravity = false
         bottom.physicsBody!.isDynamic = false
-        let top = SKNode()
+        let top = SKSpriteNode(color: .red, size: boundSize)
         top.position = CGPoint(x: frame.midX, y: frame.maxY)
-        top.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: frame.maxX, height: 10))
+        top.physicsBody = SKPhysicsBody(rectangleOf: boundSize)
         top.physicsBody!.affectedByGravity = false
         top.physicsBody!.isDynamic = false
         addChild(top)
         addChild(bottom)
+    }
+    
+    func startLaserTimer() {
+        Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addLaser), userInfo: nil, repeats: true)
+    }
+    
+    @objc func addLaser() {
+        let laser = SKSpriteNode(imageNamed: "laser_on.png")
+        laser.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
+        laser.size = CGSize(width: laser.texture!.size().width / 1.75, height: laser.texture!.size().height / 1.75)
+        laser.physicsBody = SKPhysicsBody(texture: laser.texture!, alphaThreshold: 0.5, size: laser.size)
+        laser.physicsBody!.affectedByGravity = false
+        laser.physicsBody!.isDynamic = false
+        laser.zRotation = .pi * CGFloat.random(in: 0...2)
+        let anim = SKAction.move(to: CGPoint(x: frame.minX - laser.size.height, y: laser.position.y), duration: 3)
+        laser.run(anim)
+        addChild(laser)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -71,7 +85,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func applyForce() {
-        dog.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 35))
+        dog!.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 35))
     }
     
     override func update(_ currentTime: TimeInterval) {

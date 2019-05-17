@@ -41,6 +41,7 @@
 		FA45385B228ED69600839406 /* coin_pickup.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FA45374A228ED69600839406 /* coin_pickup.mp3 */; };
 		FA45385C228ED69600839406 /* laser_off.png in Resources */ = {isa = PBXBuildFile; fileRef = FA45374B228ED69600839406 /* laser_off.png */; };
 		FA45385D228ED69600839406 /* Bloomer_Font.otf in Resources */ = {isa = PBXBuildFile; fileRef = FA45374C228ED69600839406 /* Bloomer_Font.otf */; };
+		FA45386A228F318F00839406 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA453869228F318F00839406 /* Dog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,7 @@
 		FA45374A228ED69600839406 /* coin_pickup.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = coin_pickup.mp3; sourceTree = "<group>"; };
 		FA45374B228ED69600839406 /* laser_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = laser_off.png; sourceTree = "<group>"; };
 		FA45374C228ED69600839406 /* Bloomer_Font.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bloomer_Font.otf; sourceTree = "<group>"; };
+		FA453869228F318F00839406 /* Dog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 		FA4531A1228EC1CF00839406 /* Jetpack */ = {
 			isa = PBXGroup;
 			children = (
+				FA453868228F317E00839406 /* Model */,
 				FA453628228ED69500839406 /* Assets */,
 				FA4531A2228EC1CF00839406 /* AppDelegate.swift */,
 				FA4531A8228EC1CF00839406 /* GameScene.swift */,
@@ -205,6 +208,14 @@
 				FA453746228ED69600839406 /* laser_on.png */,
 			);
 			path = laser;
+			sourceTree = "<group>";
+		};
+		FA453868228F317E00839406 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FA453869228F318F00839406 /* Dog.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -308,6 +319,7 @@
 				FA4531A9228EC1CF00839406 /* GameScene.swift in Sources */,
 				FA4531BB228EC25D00839406 /* MenuScene.swift in Sources */,
 				FA4531AB228EC1CF00839406 /* GameViewController.swift in Sources */,
+				FA45386A228F318F00839406 /* Dog.swift in Sources */,
 				FA4531A3228EC1CF00839406 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

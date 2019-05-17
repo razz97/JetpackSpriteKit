@@ -59,27 +59,11 @@ class MenuScene: SKScene {
     }
     
     func setDog() {
-        let dog = SKSpriteNode(imageNamed: "boosted1.png")
-        dog.position = CGPoint(x: frame.minX - dog.size.width, y: frame.midY * 1 / 3 + 20)
-        let horizontalMovement = SKAction.move(by: CGVector(dx: frame.size.width + dog.size.width * 2, dy: 0), duration: 4)
-        let backToStart = SKAction.move(to: CGPoint(x: frame.minX - dog.size.width, y: frame.midY * 1 / 3 + 20), duration: 0)
-        let loop = SKAction.repeatForever(SKAction.sequence([horizontalMovement, backToStart]))
-        dog.run(loop)
-        addChild(dog)
+        addChild(Dog(menuWithFrame: frame))
     }
     
-    func touchDown(atPoint pos : CGPoint) {
-        
-    }
-    
-    func isTouchInButton(_ touches: Set<UITouch>) {
-        if let location = touches.first?.location(in: self) {
-            let nodesArray = self.nodes(at: location)
-            let nodeName = nodesArray.first?.name
-            if nodeName == "playButton" {
-                isButtonHolding = true
-            }
-        }
+    func changeButtonTexture(_ hold: Bool) {
+        playButton.texture = hold ? self.textureButtonHold : self.textuteButton
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -103,14 +87,6 @@ class MenuScene: SKScene {
                 self.view?.presentScene(scene)
             }
         }
-    }
-    
-    func changeButtonTexture(_ hold: Bool) {
-        playButton.texture = hold ? self.textureButtonHold : self.textuteButton
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        
     }
 }
 
