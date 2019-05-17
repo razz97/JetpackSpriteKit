@@ -11,6 +11,9 @@ import GameplayKit
 
 class MenuScene: SKScene {
     
+    var isButtonHolding: Bool = false
+    let playButton = SKSpriteNode(imageNamed: "start.png")
+    
     override func didMove(to view: SKView) {
         setTitle()
         setPlayButton()
@@ -31,9 +34,7 @@ class MenuScene: SKScene {
         self.addChild(title)
     }
     
-    func setPlayButton() {
-        let playButton: SKSpriteNode = SKSpriteNode(imageNamed: "start.png")
-        playButton.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+    func setPlayButton() {        playButton.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         playButton.name = "playButton"
         self.addChild(playButton)
     }
@@ -76,17 +77,41 @@ class MenuScene: SKScene {
         
     }
     
+    func isTouchInButton(_ touches: Set<UITouch>) {
+        if let location = touches.first?.location(in: self) {
+            let nodesArray = self.nodes(at: location)
+            let nodeName = nodesArray.first?.name
+            if nodeName == "playButton" {
+                isButtonHolding = true
+            }
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let location = touches.first?.location(in: self) {
             let nodesArray = self.nodes(at: location)
             let nodeName = nodesArray.first?.name
             if nodeName == "playButton" {
-                print("play")
+                changeButtonTexture(true)
             }
         }
     }
     
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        changeButtonTexture(false)
+        if let location = touches.first?.location(in: self) {
+            let nodesArray = self.nodes(at: location)
+            let nodeName = nodesArray.first?.name
+            if nodeName == "playButton" {
+                // CHANGE SCENE
+                print("CHANGE SCENE")
+            }
+        }
+    }
     
+    func changeButtonTexture(_ hold: Bool) {
+        playButton.texture = SKTexture(imageNamed: "start\(hold ? "_hold" : "")")
+    }
     
     override func update(_ currentTime: TimeInterval) {
         
