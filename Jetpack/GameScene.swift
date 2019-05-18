@@ -9,6 +9,7 @@ enum nodeType: UInt32 {
     case dog = 1
     case laser = 2
     case missile = 4
+    case coin = 6
 }
 
 import SpriteKit
@@ -29,6 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setPointsLabel()
         setBounds()
         startLaserTimer()
+        startCoinTimer()
     }
     
     func setBackground() {
@@ -69,6 +71,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addLaser), userInfo: nil, repeats: true)
     }
     
+    func startCoinTimer() {
+        Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(addCoin), userInfo: nil, repeats: true)
+    }
+    
     @objc func addLaser() {
         let random = Int.random(in: 0...3)
         
@@ -84,16 +90,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         laser.physicsBody!.categoryBitMask = nodeType.laser.rawValue
         laser.physicsBody!.collisionBitMask = nodeType.dog.rawValue
         laser.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
-        var animationsArray = [anim]
+        var animations = [anim]
         if (random == Int.random(in: 0...3)){
             // ROTATING LASER!
             print("rotating laser")
             let rotation = SKAction.rotate(byAngle: CGFloat(360), duration: 7)
-            animationsArray.append(rotation)
+            animations.append(rotation)
         }
-        let animations = SKAction.group(animationsArray)
-        laser.run(animations)
+        let group = SKAction.group(animations)
+        let seq = SKAction.sequence([group,SKAction.removeFromParent()])
+        laser.run(seq)
         addChild(laser)
+    }
+    
+    @objc func addCoin() {
+        let coin = SKSpriteNode(imageNamed: "coin1.png")
+        repeat {
+        coin.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
+        } while (self.physicsWorld.body(at: coin.position) != nil)
+        coin.size = CGSize(width: coin.texture!.size().width, height: coin.texture!.size().height)
+        coin.physicsBody = SKPhysicsBody(texture: coin.texture!, alphaThreshold: 0.5, size: coin.size)
+        coin.physicsBody!.affectedByGravity = false
+        coin.physicsBody!.isDynamic = false
+        coin.zRotation = .pi * CGFloat.random(in: 0...2)
+        let move = SKAction.move(to: CGPoint(x: frame.minX - coin.size.height, y: coin.position.y), duration: 3)
+        let texture1 = SKTexture(imageNamed: "coin1.png")
+        let texture2 = SKTexture(imageNamed: "coin2.png")
+        let texture3 = SKTexture(imageNamed: "coin3.png")
+        let texture4 = SKTexture(imageNamed: "coin4.png")
+        let texture5 = SKTexture(imageNamed: "coin5.png")
+        let texture6 = SKTexture(imageNamed: "coin6.png")
+        let texture7 = SKTexture(imageNamed: "coin7.png")
+        let texture8 = SKTexture(imageNamed: "coin8.png")
+        let anim = SKAction.animate(with: [texture1,texture2,texture3,texture4,texture5,texture6,texture7,texture8], timePerFrame: 0.5)
+        let group = SKAction.group([move,anim])
+        let seq = SKAction.sequence([group,SKAction.removeFromParent()])
+        coin.run(seq)
+        
+        coin.physicsBody!.categoryBitMask = nodeType.coin.rawValue
+        coin.physicsBody!.collisionBitMask = nodeType.dog.rawValue
+        coin.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
+        
+        self.addChild(coin)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -113,13 +151,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         dog?.score += 0.13
         changeScoreLabel()
     }
-    
+    // Collision notification
     func didBegin(_ contact: SKPhysicsContact) {
         let body1 = contact.bodyA
         let body2 = contact.bodyB
+         print("Collision \(body1.categoryBitMask) & \(body2.categoryBitMask)")
         if (body1.categoryBitMask == nodeType.laser.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue &&  body2.categoryBitMask == nodeType.laser.rawValue) {
             // Laser & Dog
-            print("Collision \(body1.categoryBitMask) & \(body2.categoryBitMask)")
+            print("LASER!")
+        }
+        else if (body1.categoryBitMask == nodeType.coin.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.coin.rawValue) {
+            print("COIN!")
+            dog?.score += 50
+            if (body1.categoryBitMask == nodeType.coin.rawValue)
+            { body1.node!.removeFromParent() }
+            else { body2.node!.removeFromParent() }
         }
     }
     
