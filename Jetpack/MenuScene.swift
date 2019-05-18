@@ -24,13 +24,11 @@ class MenuScene: SKScene {
     }
     
     func setTitle() {
-        let title: SKLabelNode = SKLabelNode()
-        title.fontName = "Arial"
+        let title: SKLabelNode = SKLabelNode(fontNamed: "BloomerDEMO-Regular")
         title.fontSize = 65
         title.text = "DOGPACK RIDE"
-        title.color = .cyan
+        title.fontColor = .cyan
         title.position = CGPoint(x: self.frame.midX, y: self.frame.midY+100)
-        title.fontName = "BloomerDEMO-Regular"
         title.zPosition = 2
         self.addChild(title)
     }

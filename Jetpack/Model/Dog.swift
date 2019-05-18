@@ -23,6 +23,8 @@ class Dog: SKSpriteNode {
     // FIXME: boosted2.png not found
     let boostTexture2 = SKTexture(imageNamed: "boosted1.png")
     
+    var score: Double = Double(0)
+    
     convenience init(menuWithFrame: CGRect) {
         self.init()
         position = CGPoint(x: menuWithFrame.minX - size.width, y: menuWithFrame.midY / 3 )
@@ -30,13 +32,21 @@ class Dog: SKSpriteNode {
         run(.repeatForever(.sequence(
             [.move(by: CGVector(dx: menuWithFrame.maxX + size.width * 2, dy: 0), duration: 6),
              .move(to: CGPoint(x: menuWithFrame.minX - size.width, y: menuWithFrame.midY / 3), duration: 0)]
-        )))
+            )))
     }
     
     convenience init(gameWithFrame: CGRect) {
         self.init()
         physicsBody = SKPhysicsBody(rectangleOf: texture!.size())
         position = CGPoint(x: gameWithFrame.minX + size.width, y: gameWithFrame.midY)
+        
+        // Category
+        self.physicsBody!.categoryBitMask = nodeType.dog.rawValue
+        // Collisions
+        self.physicsBody!.collisionBitMask = nodeType.laser.rawValue | nodeType.missile.rawValue
+        // Collisions notification
+        self.physicsBody!.contactTestBitMask = nodeType.laser.rawValue | nodeType.missile.rawValue
+        
         fly()
     }
     
@@ -44,6 +54,7 @@ class Dog: SKSpriteNode {
         flyAnimation = .repeatForever(.animate(with: [flyTexture1, flyTexture2], timePerFrame: 0.2))
         boostAnimation = .repeatForever(.animate(with: [boostTexture1, boostTexture2], timePerFrame: 0.2))
         super.init(texture: flyTexture1, color: UIColor(), size: flyTexture1.size())
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
