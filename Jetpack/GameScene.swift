@@ -161,6 +161,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if (body1.categoryBitMask == nodeType.laser.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue &&  body2.categoryBitMask == nodeType.laser.rawValue) {
             // Laser & Dog
             print("LASER!")
+            // FIXME: gameover sound playing before laser?
+            run(SKAction.playSoundFileNamed("laser.mp3", waitForCompletion: true))
             dog!.die()
         }
         else if (body1.categoryBitMask == nodeType.coin.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.coin.rawValue) {
