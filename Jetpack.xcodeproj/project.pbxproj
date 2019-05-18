@@ -43,6 +43,8 @@
 		FA45385D228ED69600839406 /* Bloomer_Font.otf in Resources */ = {isa = PBXBuildFile; fileRef = FA45374C228ED69600839406 /* Bloomer_Font.otf */; };
 		FA45386A228F318F00839406 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA453869228F318F00839406 /* Dog.swift */; };
 		FAB2F3842290BCC600400046 /* laser.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FAB2F3832290BCC600400046 /* laser.mp3 */; };
+		FAB2F3862290BDDA00400046 /* menu.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FAB2F3852290BDDA00400046 /* menu.mp3 */; };
+		FAB2F3882290BF2300400046 /* click.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FAB2F3872290BF2300400046 /* click.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +86,8 @@
 		FA45374C228ED69600839406 /* Bloomer_Font.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bloomer_Font.otf; sourceTree = "<group>"; };
 		FA453869228F318F00839406 /* Dog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 		FAB2F3832290BCC600400046 /* laser.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = laser.mp3; sourceTree = "<group>"; };
+		FAB2F3852290BDDA00400046 /* menu.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = menu.mp3; sourceTree = "<group>"; };
+		FAB2F3872290BF2300400046 /* click.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = click.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +191,8 @@
 		FA453747228ED69600839406 /* sound */ = {
 			isa = PBXGroup;
 			children = (
+				FAB2F3872290BF2300400046 /* click.mp3 */,
+				FAB2F3852290BDDA00400046 /* menu.mp3 */,
 				FAB2F3832290BCC600400046 /* laser.mp3 */,
 				FA453748228ED69600839406 /* music.wav */,
 				FA453749228ED69600839406 /* game_over.mp3 */,
@@ -303,9 +309,11 @@
 				FA45384E228ED69600839406 /* background.png in Resources */,
 				FA4531B3228EC1CF00839406 /* LaunchScreen.storyboard in Resources */,
 				FA45384A228ED69600839406 /* stop1.png in Resources */,
+				FAB2F3882290BF2300400046 /* click.mp3 in Resources */,
 				FA45384C228ED69600839406 /* stop2.png in Resources */,
 				FA453846228ED69600839406 /* dead2.png in Resources */,
 				FA45385D228ED69600839406 /* Bloomer_Font.otf in Resources */,
+				FAB2F3862290BDDA00400046 /* menu.mp3 in Resources */,
 				FAB2F3842290BCC600400046 /* laser.mp3 in Resources */,
 				FA45384D228ED69600839406 /* boosted2.png in Resources */,
 				FA453845228ED69600839406 /* rocket_warn_almost.png in Resources */,

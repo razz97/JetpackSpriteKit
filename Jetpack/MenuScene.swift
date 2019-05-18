@@ -15,12 +15,14 @@ class MenuScene: SKScene {
     let textuteButton = SKTexture(imageNamed: "start.png")
     let textureButtonHold = SKTexture(imageNamed: "start_hold.png")
     let playButton = SKSpriteNode(imageNamed: "start.png")
+    let music = SKAudioNode(fileNamed: "menu.mp3")
     
     override func didMove(to view: SKView) {
         setTitle()
         setPlayButton()
         setBackground()
         setDog()
+        addChild(music)
     }
     
     func setTitle() {
@@ -69,6 +71,7 @@ class MenuScene: SKScene {
             let nodesArray = self.nodes(at: location)
             let nodeName = nodesArray.first?.name
             if nodeName == "playButton" {
+                run(.playSoundFileNamed("click.mp3", waitForCompletion: true))
                 changeButtonTexture(true)
             }
         }
