@@ -15,9 +15,13 @@ class Dog: SKSpriteNode {
     //Animations
     var flyAnimation = SKAction()
     var boostAnimation = SKAction()
+    var dieAnimation = SKAction()
     
     let flyTexture1 = SKTexture(imageNamed: "fly1.png")
     let flyTexture2 = SKTexture(imageNamed: "fly2.png")
+    // FIXME: dead1.png not found
+    let dieTexture1 = SKTexture(imageNamed: "dead1.png")
+    let dieTexture2 = SKTexture(imageNamed: "dead2.png")
     
     let boostTexture1 = SKTexture(imageNamed: "boosted1.png")
     // FIXME: boosted2.png not found
@@ -53,6 +57,7 @@ class Dog: SKSpriteNode {
     private init() {
         flyAnimation = .repeatForever(.animate(with: [flyTexture1, flyTexture2], timePerFrame: 0.2))
         boostAnimation = .repeatForever(.animate(with: [boostTexture1, boostTexture2], timePerFrame: 0.2))
+        dieAnimation = .repeatForever(.animate(with: [dieTexture1,dieTexture2], timePerFrame: 0.2))
         super.init(texture: flyTexture1, color: UIColor(), size: flyTexture1.size())
         
     }
@@ -67,5 +72,10 @@ class Dog: SKSpriteNode {
     
     func boost() {
         run(boostAnimation)
+    }
+    
+    func die() {
+        run(SKAction.playSoundFileNamed("game_over.mp3", waitForCompletion: false))
+        run(dieAnimation)
     }
 }

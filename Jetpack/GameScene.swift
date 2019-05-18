@@ -20,12 +20,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var dog: Dog?
     var timer: Timer = Timer()
     let points = SKLabelNode(fontNamed: "BloomerDEMO-Regular")
+    let music = SKAudioNode(fileNamed: "music.wav")
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0, dy: -7)
         dog = Dog(gameWithFrame: frame)
         addChild(dog!)
+        addChild(music)
         setBackground()
         setPointsLabel()
         setBounds()
@@ -159,13 +161,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if (body1.categoryBitMask == nodeType.laser.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue &&  body2.categoryBitMask == nodeType.laser.rawValue) {
             // Laser & Dog
             print("LASER!")
+            dog!.die()
         }
         else if (body1.categoryBitMask == nodeType.coin.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.coin.rawValue) {
             print("COIN!")
+            run(SKAction.playSoundFileNamed("coin_pickup.mp3", waitForCompletion: false))
             dog?.score += 50
             if (body1.categoryBitMask == nodeType.coin.rawValue)
-            { body1.node!.removeFromParent() }
-            else { body2.node!.removeFromParent() }
+            { body1.node?.removeFromParent() }
+            else { body2.node?.removeFromParent() }
         }
     }
     
