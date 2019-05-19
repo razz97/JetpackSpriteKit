@@ -28,7 +28,6 @@ class Dog: SKSpriteNode {
     let boostTexture2 = SKTexture(imageNamed: "boosted1.png")
     
     var score: Double = Double(0)
-    var dead = false
     
     convenience init(menuWithFrame: CGRect) {
         self.init()
@@ -43,15 +42,10 @@ class Dog: SKSpriteNode {
     convenience init(gameWithFrame: CGRect) {
         self.init()
         physicsBody = SKPhysicsBody(rectangleOf: texture!.size())
-        position = CGPoint(x: gameWithFrame.minX + size.width, y: gameWithFrame.midY)
-        
-        // Category
-        self.physicsBody!.categoryBitMask = nodeType.dog.rawValue
-        // Collisions
-        self.physicsBody!.collisionBitMask = nodeType.laser.rawValue | nodeType.missile.rawValue
-        // Collisions notification
-        self.physicsBody!.contactTestBitMask = nodeType.laser.rawValue | nodeType.missile.rawValue
-        
+        position = CGPoint(x: gameWithFrame.maxX * 0.2, y: gameWithFrame.midY)
+        physicsBody!.allowsRotation = false
+        physicsBody!.categoryBitMask = nodeType.dog.rawValue
+        constraints = [SKConstraint.positionX(SKRange(constantValue: position.x))]
         fly()
     }
     
@@ -76,8 +70,10 @@ class Dog: SKSpriteNode {
     }
     
     func die() {
-        dead = true
-        run(SKAction.playSoundFileNamed("game_over.mp3", waitForCompletion: false))
+        physicsBody!.categoryBitMask = 0
+        physicsBody!.contactTestBitMask = 0
+        physicsBody!.collisionBitMask = 0
+        run(SKAction.playSoundFileNamed("game_over.mp3", waitForCompletion: true))
         run(dieAnimation)
     }
 }

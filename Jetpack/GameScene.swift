@@ -5,6 +5,8 @@
 //  Created by Alex Bou on 09/04/2019.
 //  Copyright © 2019 Alex Bou. All rights reserved.
 //
+
+// 0 is used for dead dog
 enum nodeType: UInt32 {
     case dog = 1
     case laser = 2
@@ -21,6 +23,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timer: Timer = Timer()
     let points = SKLabelNode(fontNamed: "BloomerDEMO-Regular")
     let music = SKAudioNode(fileNamed: "music.wav")
+    let coinAnimation = SKAction.animate(with: [
+            SKTexture(imageNamed: "coin1.png"),SKTexture(imageNamed: "coin2.png"),
+            SKTexture(imageNamed: "coin3.png"),SKTexture(imageNamed: "coin4.png"),
+            SKTexture(imageNamed: "coin5.png"),SKTexture(imageNamed: "coin6.png"),
+            SKTexture(imageNamed: "coin7.png"),SKTexture(imageNamed: "coin8.png")
+        ], timePerFrame: 0.2)
+    var laserTimer = Timer()
+    var coinTimer = Timer()
+    var missileTimer = Timer()
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
@@ -31,8 +42,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setBackground()
         setPointsLabel()
         setBounds()
-        startLaserTimer()
-        startCoinTimer()
+        startTimers()
     }
     
     func setBackground() {
@@ -69,134 +79,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(bottom)
     }
     
-    func startLaserTimer() {
-        Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addLaser), userInfo: nil, repeats: true)
-    }
-    
-    func startCoinTimer() {
-        Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(addCoin), userInfo: nil, repeats: true)
-    }
-    
-    func isMissileTime() {
-        let random = Int.random(in: 0...3)
-        
-        if (random == Int.random(in: 0...50)){
-            print("MISSILE")
-            addMissile()
-        }
-    }
-    
-    @objc func addLaser() {
-        let random = Int.random(in: 0...3)
-        
-        let laser = SKSpriteNode(imageNamed: "laser_on.png")
-        laser.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
-        laser.size = CGSize(width: laser.texture!.size().width / 1.75, height: laser.texture!.size().height / 1.75)
-        laser.physicsBody = SKPhysicsBody(texture: laser.texture!, alphaThreshold: 0.5, size: laser.size)
-        laser.physicsBody!.affectedByGravity = false
-        laser.physicsBody!.isDynamic = false
-        laser.zRotation = .pi * CGFloat.random(in: 0...2)
-        let anim = SKAction.move(to: CGPoint(x: frame.minX - laser.size.height, y: laser.position.y), duration: 3)
-        
-        laser.physicsBody!.categoryBitMask = nodeType.laser.rawValue
-        laser.physicsBody!.collisionBitMask = nodeType.dog.rawValue
-        laser.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
-        var animations = [anim]
-        if (random == Int.random(in: 0...3)){
-            // ROTATING LASER!
-            print("rotating laser")
-            let rotation = SKAction.rotate(byAngle: CGFloat(360), duration: 7)
-            animations.append(rotation)
-        }
-        let group = SKAction.group(animations)
-        let seq = SKAction.sequence([group,SKAction.removeFromParent()])
-        laser.run(seq)
-        addChild(laser)
-    }
-    
-    @objc func addCoin() {
-        let coin = SKSpriteNode(imageNamed: "coin1.png")
-        repeat {
-        coin.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
-        } while (self.physicsWorld.body(at: coin.position) != nil)
-        coin.size = CGSize(width: coin.texture!.size().width, height: coin.texture!.size().height)
-        coin.physicsBody = SKPhysicsBody(texture: coin.texture!, alphaThreshold: 0.5, size: coin.size)
-        coin.physicsBody!.affectedByGravity = false
-        coin.physicsBody!.isDynamic = false
-        coin.zRotation = .pi * CGFloat.random(in: 0...2)
-        let move = SKAction.move(to: CGPoint(x: frame.minX - coin.size.height, y: coin.position.y), duration: 3)
-        let texture1 = SKTexture(imageNamed: "coin1.png")
-        let texture2 = SKTexture(imageNamed: "coin2.png")
-        let texture3 = SKTexture(imageNamed: "coin3.png")
-        let texture4 = SKTexture(imageNamed: "coin4.png")
-        let texture5 = SKTexture(imageNamed: "coin5.png")
-        let texture6 = SKTexture(imageNamed: "coin6.png")
-        let texture7 = SKTexture(imageNamed: "coin7.png")
-        let texture8 = SKTexture(imageNamed: "coin8.png")
-        let anim = SKAction.animate(with: [texture1,texture2,texture3,texture4,texture5,texture6,texture7,texture8], timePerFrame: 0.5)
-        let group = SKAction.group([move,anim])
-        let seq = SKAction.sequence([group,SKAction.removeFromParent()])
-        coin.run(seq)
-        
-        coin.physicsBody!.categoryBitMask = nodeType.coin.rawValue
-        coin.physicsBody!.collisionBitMask = nodeType.dog.rawValue
-        coin.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
-        
-        self.addChild(coin)
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        applyForce()
-        timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(applyForce), userInfo: nil, repeats: true)
-    }
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.timer.invalidate()
-        
-    }
-    
-    @objc func applyForce() {
-        dog!.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 35))
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        dog?.score += 0.13
-        changeScoreLabel()
-        isMissileTime()
-        if (dog!.dead) {
-            let scene = EndingScene(score: dog!.score, size: self.size)
-            self.view!.presentScene(scene)
-            // TODO CON EL TIMER DA NIL AL HACER UNWRAP DE VIEW
-            // Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
-        }
-    }
-    
-    @objc func changeToEndScene() {
-        let scene = EndingScene(score: dog!.score, size: self.size)
-        self.view!.presentScene(scene)
-    }
-    
-    // Collision notification
-    func didBegin(_ contact: SKPhysicsContact) {
-        let body1 = contact.bodyA
-        let body2 = contact.bodyB
-         print("Collision \(body1.categoryBitMask) & \(body2.categoryBitMask)")
-        if (body1.categoryBitMask == nodeType.laser.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue &&  body2.categoryBitMask == nodeType.laser.rawValue) {
-            // Laser & Dog
-            print("LASER!")
-            // FIXME: gameover sound playing before laser?
-            run(SKAction.playSoundFileNamed("laser.mp3", waitForCompletion: true))
-            dog!.die()
-        }
-        else if (body1.categoryBitMask == nodeType.coin.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.coin.rawValue) {
-            print("COIN!")
-            run(SKAction.playSoundFileNamed("coin_pickup.mp3", waitForCompletion: false))
-            dog?.score += 50
-            if (body1.categoryBitMask == nodeType.coin.rawValue)
-            { body1.node?.removeFromParent() }
-            else { body2.node?.removeFromParent() }
-        }
-    }
-    
     func setPointsLabel() {
         points.fontSize = 40
         points.fontColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
@@ -206,23 +88,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(points)
     }
     
-    func changeScoreLabel() {
-        let roundedScore = Double(round(100*dog!.score)/100)
-        points.text = "Score: \(roundedScore)"
+    func startTimers() {
+        laserTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addLaser), userInfo: nil, repeats: true)
+        coinTimer = Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(addCoin), userInfo: nil, repeats: true)
+        missileTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(addMissile), userInfo: nil, repeats: true)
     }
-    
     
     @objc func addMissile() {
-        addWarning()
-    }
-    
-    func addWarning() {
-        let warning = SKSpriteNode(imageNamed: "rocket_warn.png")
-        warning.position = CGPoint(x: self.frame.maxX, y: dog!.position.y)
-        let anim = SKAction.move(to: CGPoint(x: self.frame.maxX, y: dog!.position.y), duration: 5)
-        warning.run(.repeatForever(anim))
-        self.addChild(warning)
-        Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addAlert), userInfo: warning, repeats: false)
+        if 25 >= .random(in: 0...100) {
+            let warning = SKSpriteNode(imageNamed: "rocket_warn.png")
+            warning.position = CGPoint(x: self.frame.maxX, y: dog!.position.y)
+            addChild(warning)
+            Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addAlert), userInfo: warning, repeats: false)
+        }
     }
     
     @objc func addAlert(timer: Timer) {
@@ -230,19 +108,108 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let alert = SKSpriteNode(imageNamed: "rocket_warn_almost.png")
         alert.position = warning.position
         warning.removeFromParent()
-        let alertAlmost1 = SKTexture(imageNamed: "rocket_warn_almost.png")
-        let alertAlmost2 = SKTexture()
-        let anim = SKAction.animate(with: [alertAlmost1,alertAlmost2], timePerFrame: 0.5)
-        alert.run(.repeatForever(anim))
-        self.addChild(alert)
+        addChild(alert)
         Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addRocket), userInfo: alert, repeats: false)
     }
     
     @objc func addRocket(timer: Timer) {
         let alert = timer.userInfo as! SKSpriteNode
-        let rocket = SKSpriteNode() // TODO ADD TEXTURES
+        let rocket = SKSpriteNode(imageNamed: "boosted1.png") // TODO ADD TEXTURES
         rocket.position = alert.position
         alert.removeFromParent()
-        // TODO END
+        rocket.size = CGSize(width: rocket.texture!.size().width / 3, height: rocket.texture!.size().height / 3)
+        rocket.physicsBody = SKPhysicsBody(texture: rocket.texture!, alphaThreshold: 0.5, size: rocket.size)
+        rocket.physicsBody!.categoryBitMask = nodeType.missile.rawValue
+        rocket.physicsBody!.collisionBitMask = nodeType.dog.rawValue
+        rocket.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
+        rocket.physicsBody!.isDynamic = false
+        let moveAndRemove = SKAction.sequence([.move(to: CGPoint(x: frame.minX, y: rocket.position.y), duration: 3),.removeFromParent()])
+        rocket.run(moveAndRemove)
+        addChild(rocket)
+    }
+    
+    @objc func addLaser() {
+        let laser = SKSpriteNode(imageNamed: "laser_on.png")
+        laser.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
+        laser.size = CGSize(width: laser.texture!.size().width / 1.75, height: laser.texture!.size().height / 1.75)
+        laser.physicsBody = SKPhysicsBody(texture: laser.texture!, alphaThreshold: 0.5, size: laser.size)
+        laser.physicsBody!.affectedByGravity = false
+        laser.physicsBody!.isDynamic = false
+        laser.physicsBody!.pinned = true
+        laser.physicsBody!.categoryBitMask = nodeType.laser.rawValue
+        laser.physicsBody!.collisionBitMask = nodeType.dog.rawValue
+        laser.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
+        laser.zRotation = .pi * CGFloat.random(in: 0...2)
+        var anims:[SKAction] = [.move(to: CGPoint(x: frame.minX - laser.size.height, y: laser.position.y), duration: 3)]
+        if 25 >= .random(in: 0...100) {
+            anims.append(.rotate(byAngle: .pi * 2, duration: 3))
+        }
+        laser.run(.sequence([.group(anims),.removeFromParent()]))
+        addChild(laser)
+    }
+    
+    @objc func addCoin() {
+        let coin = SKSpriteNode(imageNamed: "coin1.png")
+        coin.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
+        coin.size = CGSize(width: coin.texture!.size().width, height: coin.texture!.size().height)
+        coin.physicsBody = SKPhysicsBody(texture: coin.texture!, alphaThreshold: 0.5, size: coin.size)
+        coin.physicsBody!.affectedByGravity = false
+        coin.physicsBody!.isDynamic = false
+        coin.physicsBody!.categoryBitMask = nodeType.coin.rawValue
+        coin.physicsBody!.collisionBitMask = nodeType.dog.rawValue
+        coin.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
+        let move = SKAction.move(to: CGPoint(x: frame.minX - coin.size.height, y: coin.position.y), duration: 3)
+        coin.run(.sequence([.group([move,coinAnimation]),.removeFromParent()]))
+        self.addChild(coin)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        applyForce()
+        timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(applyForce), userInfo: nil, repeats: true)
+    }
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        timer.invalidate()
+    }
+    
+    @objc func applyForce() {
+        dog!.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 35))
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        dog!.score += 0.13
+        points.text = "Score: \(Double(round(100*dog!.score)/100))"
+    }
+    
+    @objc func changeToEndScene() {
+        timer.invalidate()
+        coinTimer.invalidate()
+        laserTimer.invalidate()
+        missileTimer.invalidate()
+        let scene = EndingScene(score: dog!.score, size: size)
+        self.view?.presentScene(scene)
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        let body1 = contact.bodyA
+        let body2 = contact.bodyB
+        if (body1.categoryBitMask == nodeType.laser.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue &&  body2.categoryBitMask == nodeType.laser.rawValue) {
+            dog!.die()
+            run(.playSoundFileNamed("laser.mp3", waitForCompletion: true))
+            Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
+        }
+        else if (body1.categoryBitMask == nodeType.coin.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.coin.rawValue) {
+            run(SKAction.playSoundFileNamed("coin_pickup.mp3", waitForCompletion: false))
+            dog?.score += 50
+            if body1.categoryBitMask == nodeType.coin.rawValue {
+                body1.node?.removeFromParent()
+            } else {
+                body2.node?.removeFromParent()
+            }
+        }
+        else if (body1.categoryBitMask == nodeType.missile.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.missile.rawValue) {
+            dog!.die()
+            run(.playSoundFileNamed("laser.mp3", waitForCompletion: true))
+            Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
+        }
     }
 }

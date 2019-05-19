@@ -125,14 +125,14 @@
 				FA453868228F317E00839406 /* Model */,
 				FA453628228ED69500839406 /* Assets */,
 				FA4531A2228EC1CF00839406 /* AppDelegate.swift */,
-				FA4531A8228EC1CF00839406 /* GameScene.swift */,
 				FA4531BA228EC25D00839406 /* MenuScene.swift */,
+				FA4531A8228EC1CF00839406 /* GameScene.swift */,
+				FAB2F38922914DB700400046 /* EndingScene.swift */,
 				FA4531AA228EC1CF00839406 /* GameViewController.swift */,
 				FA4531AC228EC1CF00839406 /* Main.storyboard */,
 				FA4531AF228EC1CF00839406 /* Assets.xcassets */,
 				FA4531B1228EC1CF00839406 /* LaunchScreen.storyboard */,
 				FA4531B4228EC1CF00839406 /* Info.plist */,
-				FAB2F38922914DB700400046 /* EndingScene.swift */,
 			);
 			path = Jetpack;
 			sourceTree = "<group>";
