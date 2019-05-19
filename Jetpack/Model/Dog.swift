@@ -72,8 +72,6 @@ class Dog: SKSpriteNode {
     
     func die() {
         physicsBody!.categoryBitMask = 0
-        physicsBody!.contactTestBitMask = 0
-        physicsBody!.collisionBitMask = 0
         run(SKAction.playSoundFileNamed("game_over.mp3", waitForCompletion: true))
         run(dieAnimation)
     }

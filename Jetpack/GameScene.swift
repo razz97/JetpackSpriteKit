@@ -202,7 +202,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             case nodeType.missile.rawValue, nodeType.laser.rawValue:
                 self.dog!.die()
                 run(.playSoundFileNamed("laser.mp3", waitForCompletion: true))
-                Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
+                let explosion = SKEmitterNode(fileNamed: "Explosion")!
+                explosion.position = other.node!.position
+                addChild(explosion)
+                run(.wait(forDuration: 2)) {
+                    explosion.removeFromParent()
+                    self.changeToEndScene()
+                }
                 break
             case nodeType.coin.rawValue:
                 other.node?.removeFromParent()
