@@ -35,7 +35,7 @@ class Dog: SKSpriteNode {
     convenience init(menuWithFrame: CGRect) {
         self.init()
         position = CGPoint(x: menuWithFrame.minX - size.width, y: menuWithFrame.midY / 3 )
-        boost()
+        boostMenu()
         run(.repeatForever(.sequence(
             [.move(by: CGVector(dx: menuWithFrame.maxX + size.width * 2, dy: 0), duration: 6),
              .move(to: CGPoint(x: menuWithFrame.minX - size.width, y: menuWithFrame.midY / 3), duration: 0)]
@@ -67,6 +67,10 @@ class Dog: SKSpriteNode {
     @objc func fly() {
         boosted = false
         run(flyAnimation)
+    }
+    
+    func boostMenu() {
+        run(boostAnimation)
     }
     
     func boost() {
