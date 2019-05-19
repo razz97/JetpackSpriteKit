@@ -101,7 +101,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     @objc func addMissile() {
         if 25 >= .random(in: 0...100) {
             let warning = SKSpriteNode(imageNamed: "rocket_warn.png")
-            warning.position = CGPoint(x: self.frame.maxX, y: dog!.position.y)
+            warning.position = CGPoint(x: self.frame.maxX - warning.frame.maxX, y: dog!.position.y)
             addChild(warning)
             Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addAlert), userInfo: warning, repeats: false)
         }
