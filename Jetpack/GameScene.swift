@@ -77,6 +77,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(addCoin), userInfo: nil, repeats: true)
     }
     
+    func isMissileTime() {
+        let random = Int.random(in: 0...3)
+        
+        if (random == Int.random(in: 0...50)){
+            print("MISSILE")
+            addMissile()
+        }
+    }
+    
     @objc func addLaser() {
         let random = Int.random(in: 0...3)
         
@@ -152,6 +161,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         dog?.score += 0.13
         changeScoreLabel()
+        isMissileTime()
     }
     // Collision notification
     func didBegin(_ contact: SKPhysicsContact) {
@@ -187,5 +197,40 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func changeScoreLabel() {
         let roundedScore = Double(round(100*dog!.score)/100)
         points.text = "Score: \(roundedScore)"
+    }
+    
+    
+    @objc func addMissile() {
+        addWarning()
+    }
+    
+    func addWarning() {
+        let warning = SKSpriteNode(imageNamed: "rocket_warn.png")
+        warning.position = CGPoint(x: self.frame.maxX, y: dog!.position.y)
+        let anim = SKAction.move(to: CGPoint(x: self.frame.maxX, y: dog!.position.y), duration: 5)
+        warning.run(.repeatForever(anim))
+        self.addChild(warning)
+        Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addAlert), userInfo: warning, repeats: false)
+    }
+    
+    @objc func addAlert(timer: Timer) {
+        let warning = timer.userInfo as! SKSpriteNode
+        let alert = SKSpriteNode(imageNamed: "rocket_warn_almost.png")
+        alert.position = warning.position
+        warning.removeFromParent()
+        let alertAlmost1 = SKTexture(imageNamed: "rocket_warn_almost.png")
+        let alertAlmost2 = SKTexture()
+        let anim = SKAction.animate(with: [alertAlmost1,alertAlmost2], timePerFrame: 0.5)
+        alert.run(.repeatForever(anim))
+        self.addChild(alert)
+        Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addRocket), userInfo: alert, repeats: false)
+    }
+    
+    @objc func addRocket(timer: Timer) {
+        let alert = timer.userInfo as! SKSpriteNode
+        let rocket = SKSpriteNode() // TODO ADD TEXTURES
+        rocket.position = alert.position
+        alert.removeFromParent()
+        // TODO END
     }
 }
