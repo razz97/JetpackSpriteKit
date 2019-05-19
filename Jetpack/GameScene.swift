@@ -107,8 +107,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func startTimers() {
         laserTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addLaser), userInfo: nil, repeats: true)
         coinTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(addCoin), userInfo: nil, repeats: true)
-        missileTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addMissile), userInfo: nil, repeats: true)
-        starTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addBooster), userInfo: nil, repeats: true)
+        missileTimer = Timer.scheduledTimer(timeInterval: 2.3, target: self, selector: #selector(addMissile), userInfo: nil, repeats: true)
+        starTimer = Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(addBooster), userInfo: nil, repeats: true)
     }
     
     @objc func addMissile() {
