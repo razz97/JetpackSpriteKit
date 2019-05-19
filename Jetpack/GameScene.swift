@@ -42,7 +42,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             SKTexture(imageNamed: "star16"),SKTexture(imageNamed: "star17"),SKTexture(imageNamed: "star18"),
             SKTexture(imageNamed: "star19"),SKTexture(imageNamed: "star21"),SKTexture(imageNamed: "star22"),
             SKTexture(imageNamed: "star23"),
-        ], timePerFrame: 0.2), count: 2)
+        ], timePerFrame: 0.1), count: 2)
     
     var laserTimer = Timer()
     var coinTimer = Timer()
@@ -224,6 +224,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         explosion.removeFromParent()
                         self.changeToEndScene()
                     }
+                } else if other.categoryBitMask == nodeType.laser.rawValue {
+                    (other.node! as! SKSpriteNode).texture = SKTexture(imageNamed: "laser_off.png")
+                } else {
+                    other.node?.removeFromParent()
                 }
                 break
             case nodeType.coin.rawValue:
@@ -238,7 +242,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func addBooster() {
-        let booster = SKSpriteNode()
+        let booster = SKSpriteNode(imageNamed: "star1")
         booster.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
         booster.size = CGSize(width: booster.texture!.size().width, height: booster.texture!.size().height)
         booster.physicsBody = SKPhysicsBody(texture: booster.texture!, alphaThreshold: 0.5, size: booster.size)
