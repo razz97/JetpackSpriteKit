@@ -28,6 +28,7 @@ class Dog: SKSpriteNode {
     let boostTexture2 = SKTexture(imageNamed: "boosted1.png")
     
     var score: Double = Double(0)
+    var dead = false
     
     convenience init(menuWithFrame: CGRect) {
         self.init()
@@ -75,6 +76,7 @@ class Dog: SKSpriteNode {
     }
     
     func die() {
+        dead = true
         run(SKAction.playSoundFileNamed("game_over.mp3", waitForCompletion: false))
         run(dieAnimation)
     }

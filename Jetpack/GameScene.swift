@@ -162,7 +162,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         dog?.score += 0.13
         changeScoreLabel()
         isMissileTime()
+        if (dog!.dead) {
+            let scene = EndingScene(score: dog!.score, size: self.size)
+            self.view!.presentScene(scene)
+            // TODO CON EL TIMER DA NIL AL HACER UNWRAP DE VIEW
+            // Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
+        }
     }
+    
+    @objc func changeToEndScene() {
+        let scene = EndingScene(score: dog!.score, size: self.size)
+        self.view!.presentScene(scene)
+    }
+    
     // Collision notification
     func didBegin(_ contact: SKPhysicsContact) {
         let body1 = contact.bodyA
