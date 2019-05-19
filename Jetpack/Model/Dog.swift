@@ -19,8 +19,9 @@ class Dog: SKSpriteNode {
     
     let flyTexture1 = SKTexture(imageNamed: "fly1.png")
     let flyTexture2 = SKTexture(imageNamed: "fly2.png")
+    
     // FIXME: dead1.png not found
-    let dieTexture1 = SKTexture(imageNamed: "dead1.png")
+    let dieTexture1 = SKTexture(imageNamed: "dead2.png")
     let dieTexture2 = SKTexture(imageNamed: "dead2.png")
     
     let boostTexture1 = SKTexture(imageNamed: "boosted1.png")
@@ -32,7 +33,7 @@ class Dog: SKSpriteNode {
     convenience init(menuWithFrame: CGRect) {
         self.init()
         position = CGPoint(x: menuWithFrame.minX - size.width, y: menuWithFrame.midY / 3 )
-        run(boostAnimation)
+        boost()
         run(.repeatForever(.sequence(
             [.move(by: CGVector(dx: menuWithFrame.maxX + size.width * 2, dy: 0), duration: 6),
              .move(to: CGPoint(x: menuWithFrame.minX - size.width, y: menuWithFrame.midY / 3), duration: 0)]

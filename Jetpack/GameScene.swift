@@ -28,7 +28,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             SKTexture(imageNamed: "coin3.png"),SKTexture(imageNamed: "coin4.png"),
             SKTexture(imageNamed: "coin5.png"),SKTexture(imageNamed: "coin6.png"),
             SKTexture(imageNamed: "coin7.png"),SKTexture(imageNamed: "coin8.png")
-        ], timePerFrame: 0.2)
+        ], timePerFrame: 0.5)
+    let billAnimation = SKAction.animate(with: [
+        SKTexture(imageNamed: "bill2"),SKTexture(imageNamed: "bill3"), SKTexture(imageNamed: "bill4"), SKTexture(imageNamed: "bill5")
+    ], timePerFrame: 0.2)
     var laserTimer = Timer()
     var coinTimer = Timer()
     var missileTimer = Timer()
@@ -114,16 +117,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     @objc func addRocket(timer: Timer) {
         let alert = timer.userInfo as! SKSpriteNode
-        let rocket = SKSpriteNode(imageNamed: "boosted1.png") // TODO ADD TEXTURES
+        let rocket = SKSpriteNode(imageNamed: "bill2")
         rocket.position = alert.position
+        rocket.xScale = rocket.xScale * -1
         alert.removeFromParent()
-        rocket.size = CGSize(width: rocket.texture!.size().width / 3, height: rocket.texture!.size().height / 3)
+        rocket.size = CGSize(width: rocket.texture!.size().width * 2, height: rocket.texture!.size().height * 1.75)
         rocket.physicsBody = SKPhysicsBody(texture: rocket.texture!, alphaThreshold: 0.5, size: rocket.size)
         rocket.physicsBody!.categoryBitMask = nodeType.missile.rawValue
         rocket.physicsBody!.collisionBitMask = nodeType.dog.rawValue
         rocket.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
         rocket.physicsBody!.isDynamic = false
-        let moveAndRemove = SKAction.sequence([.move(to: CGPoint(x: frame.minX, y: rocket.position.y), duration: 3),.removeFromParent()])
+        let move = SKAction.move(to: CGPoint(x: frame.minX, y: rocket.position.y), duration: 3)
+        let moveAndRemove = SKAction.sequence([.group([move,billAnimation]),.removeFromParent()])
         rocket.run(moveAndRemove)
         addChild(rocket)
     }
