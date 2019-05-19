@@ -12,6 +12,8 @@ import SpriteKit
 
 class Dog: SKSpriteNode {
     
+    var boosted = false
+    
     //Animations
     var flyAnimation = SKAction()
     var boostAnimation = SKAction()
@@ -62,12 +64,15 @@ class Dog: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    func fly() {
+    @objc func fly() {
+        boosted = false
         run(flyAnimation)
     }
     
     func boost() {
+        boosted = true
         run(boostAnimation)
+        Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(fly), userInfo: nil, repeats: true)
     }
     
     func die() {
