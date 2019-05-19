@@ -12,6 +12,7 @@ enum nodeType: UInt32 {
     case laser = 2
     case missile = 4
     case coin = 6
+    case booster = 7
 }
 
 import SpriteKit
@@ -216,5 +217,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.dog?.score += 50
             default: break
         }
+    }
+    
+    func addBooster() {
+        let booster = SKSpriteNode()
+        booster.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
+        booster.size = CGSize(width: booster.texture!.size().width, height: booster.texture!.size().height)
+        booster.physicsBody = SKPhysicsBody(texture: booster.texture!, alphaThreshold: 0.5, size: booster.size)
+        booster.physicsBody!.affectedByGravity = false
+        booster.physicsBody!.isDynamic = false
+        booster.physicsBody!.categoryBitMask = nodeType.booster.rawValue
+        booster.physicsBody!.collisionBitMask = nodeType.dog.rawValue
+        booster.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
+        addChild(booster)
     }
 }
