@@ -191,7 +191,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func applyForce() {
-        dog!.physicsBody!.applyImpulse(CGVector(dx: 0, dy: 35))
+        dog!.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 35))
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -224,11 +224,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         explosion.removeFromParent()
                         self.changeToEndScene()
                     }
-                } else if other.categoryBitMask == nodeType.laser.rawValue {
-                    (other.node! as! SKSpriteNode).texture = SKTexture(imageNamed: "laser_off.png")
-                } else {
-                    other.node?.removeFromParent()
-                }
+                } else { other.node?.removeFromParent() }
                 break
             case nodeType.coin.rawValue:
                 other.node?.removeFromParent()
@@ -237,6 +233,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 break
             case nodeType.booster.rawValue:
                 dog!.boost()
+                other.node?.removeFromParent()
             default: break
         }
     }

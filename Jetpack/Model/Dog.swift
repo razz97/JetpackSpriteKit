@@ -33,7 +33,7 @@ class Dog: SKSpriteNode {
     var score: Double = Double(0)
     
     convenience init(menuWithFrame: CGRect) {
-        self.init()
+        self.init(menuWithFrame)
         position = CGPoint(x: menuWithFrame.minX - size.width, y: menuWithFrame.midY / 3 )
         boostMenu()
         run(.repeatForever(.sequence(
@@ -43,20 +43,21 @@ class Dog: SKSpriteNode {
     }
     
     convenience init(gameWithFrame: CGRect) {
-        self.init()
-        physicsBody = SKPhysicsBody(rectangleOf: texture!.size())
+        self.init(gameWithFrame)
+        physicsBody = SKPhysicsBody(rectangleOf: size)
         position = CGPoint(x: gameWithFrame.maxX * 0.2, y: gameWithFrame.midY)
         physicsBody!.allowsRotation = false
         physicsBody!.categoryBitMask = nodeType.dog.rawValue
+        physicsBody!.mass = 1
         constraints = [SKConstraint.positionX(SKRange(constantValue: position.x))]
         fly()
     }
     
-    private init() {
+    private init(_ frame: CGRect) {
         flyAnimation = .repeatForever(.animate(with: [flyTexture1, flyTexture2], timePerFrame: 0.2))
         boostAnimation = .repeatForever(.animate(with: [boostTexture1, boostTexture2], timePerFrame: 0.2))
         dieAnimation = .repeatForever(.animate(with: [dieTexture1,dieTexture2], timePerFrame: 0.2))
-        super.init(texture: flyTexture1, color: UIColor(), size: flyTexture1.size())
+        super.init(texture: flyTexture1, color: UIColor(), size: CGSize(width: frame.width * 0.175, height: frame.height * 0.16))
         
     }
     
@@ -76,11 +77,11 @@ class Dog: SKSpriteNode {
     func boost() {
         boosted = true
         run(boostAnimation)
-        Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(fly), userInfo: nil, repeats: true)
+        Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(fly), userInfo: nil, repeats: false)
     }
     
     func die() {
-        physicsBody!.categoryBitMask = 0
+        physicsBody = nil
         run(SKAction.playSoundFileNamed("game_over.mp3", waitForCompletion: true))
         run(dieAnimation)
     }
