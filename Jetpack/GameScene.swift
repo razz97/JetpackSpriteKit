@@ -81,12 +81,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func setBounds() {
         let boundSize = CGSize(width: frame.maxX, height: 10)
-        let bottom = SKSpriteNode(color: .red, size: boundSize)
+        let bottom = SKNode()
         bottom.position = CGPoint(x: frame.midX, y: frame.minY)
         bottom.physicsBody = SKPhysicsBody(rectangleOf: boundSize)
         bottom.physicsBody!.affectedByGravity = false
         bottom.physicsBody!.isDynamic = false
-        let top = SKSpriteNode(color: .red, size: boundSize)
+        let top = SKNode()
         top.position = CGPoint(x: frame.midX, y: frame.maxY)
         top.physicsBody = SKPhysicsBody(rectangleOf: boundSize)
         top.physicsBody!.affectedByGravity = false
@@ -105,15 +105,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func startTimers() {
-        laserTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addLaser), userInfo: nil, repeats: true)
-        coinTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(addCoin), userInfo: nil, repeats: true)
-        missileTimer = Timer.scheduledTimer(timeInterval: 2.3, target: self, selector: #selector(addMissile), userInfo: nil, repeats: true)
-        starTimer = Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(addBooster), userInfo: nil, repeats: true)
+        laserTimer = Timer.scheduledTimer(timeInterval: 2.17, target: self, selector: #selector(addLaser), userInfo: nil, repeats: true)
+        coinTimer = Timer.scheduledTimer(timeInterval: 1.13, target: self, selector: #selector(addCoin), userInfo: nil, repeats: true)
+        missileTimer = Timer.scheduledTimer(timeInterval: 2.37, target: self, selector: #selector(addMissile), userInfo: nil, repeats: true)
+        starTimer = Timer.scheduledTimer(timeInterval: 5.5, target: self, selector: #selector(addBooster), userInfo: nil, repeats: true)
     }
     
     @objc func addMissile() {
         if 25 >= .random(in: 0...100) {
             let warning = SKSpriteNode(imageNamed: "rocket_warn.png")
+            warning.size = CGSize(width: frame.width * 0.05, height: frame.height * 0.1)
             warning.position = CGPoint(x: self.frame.maxX - warning.frame.maxX, y: dog!.position.y)
             addChild(warning)
             Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addAlert), userInfo: warning, repeats: false)
@@ -123,6 +124,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     @objc func addAlert(timer: Timer) {
         let warning = timer.userInfo as! SKSpriteNode
         let alert = SKSpriteNode(imageNamed: "rocket_warn_almost.png")
+        alert.size = CGSize(width: frame.width * 0.05, height: frame.height * 0.1)
         alert.position = warning.position
         warning.removeFromParent()
         addChild(alert)
@@ -133,6 +135,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let alert = timer.userInfo as! SKSpriteNode
         let rocket = SKSpriteNode(imageNamed: "bill2")
         rocket.position = alert.position
+        rocket.size = CGSize(width: frame.width * 0.075, height: frame.height * 0.06)
         rocket.xScale *= -1
         alert.removeFromParent()
         rocket.size = CGSize(width: rocket.texture!.size().width * 2, height: rocket.texture!.size().height * 1.75)
@@ -150,7 +153,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     @objc func addLaser() {
         let laser = SKSpriteNode(imageNamed: "laser_on.png")
         laser.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
-        laser.size = CGSize(width: laser.texture!.size().width / 1.75, height: laser.texture!.size().height / 1.75)
+        laser.size = CGSize(width: frame.width * 0.05, height: frame.height * 0.55)
         laser.physicsBody = SKPhysicsBody(texture: laser.texture!, alphaThreshold: 0.5, size: laser.size)
         laser.physicsBody!.affectedByGravity = false
         laser.physicsBody!.isDynamic = false
@@ -170,7 +173,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     @objc func addCoin() {
         let coin = SKSpriteNode(imageNamed: "coin1.png")
         coin.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
-        coin.size = CGSize(width: coin.texture!.size().width, height: coin.texture!.size().height)
+        coin.size = CGSize(width: frame.width * 0.05, height: frame.width * 0.05)
         coin.physicsBody = SKPhysicsBody(texture: coin.texture!, alphaThreshold: 0.5, size: coin.size)
         coin.physicsBody!.affectedByGravity = false
         coin.physicsBody!.isDynamic = false
@@ -180,6 +183,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let move = SKAction.move(to: CGPoint(x: frame.minX - 100, y: coin.position.y), duration: 3)
         coin.run(.sequence([.group([move,coinAnimation]),.removeFromParent()]))
         self.addChild(coin)
+        print("height: \(frame.height), width: \(frame.width)")
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -191,7 +195,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func applyForce() {
-        dog!.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 35))
+        dog!.physicsBody?.applyImpulse(CGVector(dx: 0, dy: frame.height * 0.35 - 105))
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -239,17 +243,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func addBooster() {
-        let booster = SKSpriteNode(imageNamed: "star1")
-        booster.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
-        booster.size = CGSize(width: booster.texture!.size().width, height: booster.texture!.size().height)
-        booster.physicsBody = SKPhysicsBody(texture: booster.texture!, alphaThreshold: 0.5, size: booster.size)
-        booster.physicsBody!.affectedByGravity = false
-        booster.physicsBody!.isDynamic = false
-        booster.physicsBody!.categoryBitMask = nodeType.booster.rawValue
-        booster.physicsBody!.collisionBitMask = nodeType.dog.rawValue
-        booster.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
-        let move = SKAction.move(to: CGPoint(x: frame.minX - booster.size.height, y: booster.position.y), duration: 3)
-        booster.run(.sequence([.group([move,starAnimation]),.removeFromParent()]))
-        addChild(booster)
+        if 25 >= Int.random(in: 0 ... 100) {
+            let booster = SKSpriteNode(imageNamed: "star1")
+            booster.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
+            booster.size = CGSize(width: frame.width * 0.07, height: frame.width * 0.07)
+            booster.physicsBody = SKPhysicsBody(texture: booster.texture!, alphaThreshold: 0.5, size: booster.size)
+            booster.physicsBody!.affectedByGravity = false
+            booster.physicsBody!.isDynamic = false
+            booster.physicsBody!.categoryBitMask = nodeType.booster.rawValue
+            booster.physicsBody!.collisionBitMask = nodeType.dog.rawValue
+            booster.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
+            let move = SKAction.move(to: CGPoint(x: frame.minX - booster.size.height, y: booster.position.y), duration: 3)
+            booster.run(.sequence([.group([move,starAnimation]),.removeFromParent()]))
+            addChild(booster)
+        }
     }
 }

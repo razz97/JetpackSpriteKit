@@ -48,7 +48,6 @@ class Dog: SKSpriteNode {
         position = CGPoint(x: gameWithFrame.maxX * 0.2, y: gameWithFrame.midY)
         physicsBody!.allowsRotation = false
         physicsBody!.categoryBitMask = nodeType.dog.rawValue
-        physicsBody!.mass = 1
         constraints = [SKConstraint.positionX(SKRange(constantValue: position.x))]
         fly()
     }
