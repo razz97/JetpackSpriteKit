@@ -23,15 +23,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timer: Timer = Timer()
     let points = SKLabelNode(fontNamed: "BloomerDEMO-Regular")
     let music = SKAudioNode(fileNamed: "music.wav")
-    let coinAnimation = SKAction.animate(with: [
+    let coinAnimation = SKAction.repeat(.animate(with: [
             SKTexture(imageNamed: "coin1.png"),SKTexture(imageNamed: "coin2.png"),
             SKTexture(imageNamed: "coin3.png"),SKTexture(imageNamed: "coin4.png"),
             SKTexture(imageNamed: "coin5.png"),SKTexture(imageNamed: "coin6.png"),
             SKTexture(imageNamed: "coin7.png"),SKTexture(imageNamed: "coin8.png")
-        ], timePerFrame: 0.5)
-    let billAnimation = SKAction.animate(with: [
+        ], timePerFrame: 0.2),count: 3)
+    let billAnimation = SKAction.repeat(.animate(with: [
         SKTexture(imageNamed: "bill2"),SKTexture(imageNamed: "bill3"), SKTexture(imageNamed: "bill4"), SKTexture(imageNamed: "bill5")
-    ], timePerFrame: 0.2)
+    ], timePerFrame: 0.2),count: 3)
+    
     var laserTimer = Timer()
     var coinTimer = Timer()
     var missileTimer = Timer()
@@ -102,7 +103,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let warning = SKSpriteNode(imageNamed: "rocket_warn.png")
             warning.position = CGPoint(x: self.frame.maxX, y: dog!.position.y)
             addChild(warning)
-            Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addAlert), userInfo: warning, repeats: false)
+            Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(addAlert), userInfo: warning, repeats: false)
         }
     }
     
@@ -112,14 +113,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         alert.position = warning.position
         warning.removeFromParent()
         addChild(alert)
-        Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addRocket), userInfo: alert, repeats: false)
+        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(addRocket), userInfo: alert, repeats: false)
     }
     
     @objc func addRocket(timer: Timer) {
         let alert = timer.userInfo as! SKSpriteNode
         let rocket = SKSpriteNode(imageNamed: "bill2")
         rocket.position = alert.position
-        rocket.xScale = rocket.xScale * -1
+        rocket.xScale *= -1
         alert.removeFromParent()
         rocket.size = CGSize(width: rocket.texture!.size().width * 2, height: rocket.texture!.size().height * 1.75)
         rocket.physicsBody = SKPhysicsBody(texture: rocket.texture!, alphaThreshold: 0.5, size: rocket.size)
@@ -127,7 +128,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         rocket.physicsBody!.collisionBitMask = nodeType.dog.rawValue
         rocket.physicsBody!.contactTestBitMask = nodeType.dog.rawValue
         rocket.physicsBody!.isDynamic = false
-        let move = SKAction.move(to: CGPoint(x: frame.minX, y: rocket.position.y), duration: 3)
+        let move = SKAction.move(to: CGPoint(x: frame.minX, y: rocket.position.y), duration: 2.5)
         let moveAndRemove = SKAction.sequence([.group([move,billAnimation]),.removeFromParent()])
         rocket.run(moveAndRemove)
         addChild(rocket)
@@ -135,7 +136,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     @objc func addLaser() {
         let laser = SKSpriteNode(imageNamed: "laser_on.png")
-        laser.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
+        laser.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
         laser.size = CGSize(width: laser.texture!.size().width / 1.75, height: laser.texture!.size().height / 1.75)
         laser.physicsBody = SKPhysicsBody(texture: laser.texture!, alphaThreshold: 0.5, size: laser.size)
         laser.physicsBody!.affectedByGravity = false
@@ -155,7 +156,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     @objc func addCoin() {
         let coin = SKSpriteNode(imageNamed: "coin1.png")
-        coin.position = CGPoint(x: frame.maxX, y: frame.midY * CGFloat.random(in: 0.5 ... 1.5))
+        coin.position = CGPoint(x: frame.maxX, y: frame.midY * .random(in: 0.5 ... 1.5))
         coin.size = CGSize(width: coin.texture!.size().width, height: coin.texture!.size().height)
         coin.physicsBody = SKPhysicsBody(texture: coin.texture!, alphaThreshold: 0.5, size: coin.size)
         coin.physicsBody!.affectedByGravity = false
