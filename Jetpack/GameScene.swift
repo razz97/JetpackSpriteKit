@@ -190,26 +190,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        let body1 = contact.bodyA
-        let body2 = contact.bodyB
-        if (body1.categoryBitMask == nodeType.laser.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue &&  body2.categoryBitMask == nodeType.laser.rawValue) {
-            dog!.die()
-            run(.playSoundFileNamed("laser.mp3", waitForCompletion: true))
-            Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
-        }
-        else if (body1.categoryBitMask == nodeType.coin.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.coin.rawValue) {
-            run(SKAction.playSoundFileNamed("coin_pickup.mp3", waitForCompletion: false))
-            dog?.score += 50
-            if body1.categoryBitMask == nodeType.coin.rawValue {
-                body1.node?.removeFromParent()
-            } else {
-                body2.node?.removeFromParent()
-            }
-        }
-        else if (body1.categoryBitMask == nodeType.missile.rawValue && body2.categoryBitMask == nodeType.dog.rawValue) || (body1.categoryBitMask == nodeType.dog.rawValue && body2.categoryBitMask == nodeType.missile.rawValue) {
-            dog!.die()
-            run(.playSoundFileNamed("laser.mp3", waitForCompletion: true))
-            Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
+        // We only have collisions between a dog and something else
+        let other = contact.bodyA.categoryBitMask == nodeType.dog.rawValue ? contact.bodyB : contact.bodyA
+        switch other.categoryBitMask {
+            case nodeType.missile.rawValue, nodeType.laser.rawValue:
+                self.dog!.die()
+                run(.playSoundFileNamed("laser.mp3", waitForCompletion: true))
+                Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(changeToEndScene), userInfo: nil, repeats: false)
+                break
+            case nodeType.coin.rawValue:
+                other.node?.removeFromParent()
+                run(SKAction.playSoundFileNamed("coin_pickup.mp3", waitForCompletion: false))
+                self.dog?.score += 50
+            default: break
         }
     }
 }
